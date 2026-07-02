@@ -1,5 +1,5 @@
 # .github/metadata.yaml
-description: "Composed tensor operations for Swift — element-wise transcendental functions, matrix products, and statistical reductions atop swift-tensor-primitives."
+description: "Composed tensor operations — element-wise transcendental functions, matrix products, and statistical reductions — for Swift."
 topics:
   - foundations
   - tensors
