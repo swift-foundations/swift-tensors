@@ -100,9 +100,11 @@ where
                             aValue = try self.element(at: aPosition)
                             bValue = try other.element(at: bPosition)
                         } catch {
-                            preconditionFailure("batched matmul positions are in-bounds by construction")
+                            preconditionFailure(
+                                "batched matmul positions are in-bounds by construction"
+                            )
                         }
-                        accumulator = accumulator + aValue * bValue
+                        accumulator += aValue * bValue
                     }
                     elements.append(accumulator)
                 }

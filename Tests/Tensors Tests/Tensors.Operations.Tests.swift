@@ -9,8 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-import Testing
 import Tensors_Test_Support
+import Testing
 
 // `Tensor.Value<Element, Rank, Layout>` is generic, so per [SWIFT-TEST-003] we
 // use the parallel-namespace pattern rather than `extension Tensor.Value {
@@ -27,7 +27,7 @@ struct `Tensors Operations Tests` {
 // MARK: - Test Helpers
 
 /// Constructs a rank-1 tensor of `Double` from a flat element list.
-fileprivate func rank1Tensor(
+private func rank1Tensor(
     _ elements: [Double]
 ) -> Tensor.Value<Double, 1, Tensor.Layout.Order.Row> {
     var dims = InlineArray<1, Cardinal>(repeating: .zero)
@@ -36,7 +36,8 @@ fileprivate func rank1Tensor(
     let result: Tensor.Value<Double, 1, Tensor.Layout.Order.Row>
     do throws(Tensor.Shape<1>.Error) {
         result = try Tensor.Value<Double, 1, Tensor.Layout.Order.Row>(
-            shape: shape, elements: elements
+            shape: shape,
+            elements: elements
         )
     } catch {
         preconditionFailure("rank1Tensor: element count by construction")
@@ -45,8 +46,10 @@ fileprivate func rank1Tensor(
 }
 
 /// Constructs a rank-2 tensor of `Double` from a flat row-major element list.
-fileprivate func rank2Tensor(
-    _ rows: Int, _ cols: Int, _ elements: [Double]
+private func rank2Tensor(
+    _ rows: Int,
+    _ cols: Int,
+    _ elements: [Double]
 ) -> Tensor.Value<Double, 2, Tensor.Layout.Order.Row> {
     var dims = InlineArray<2, Cardinal>(repeating: .zero)
     dims[0] = Cardinal(UInt(rows))
@@ -55,7 +58,8 @@ fileprivate func rank2Tensor(
     let result: Tensor.Value<Double, 2, Tensor.Layout.Order.Row>
     do throws(Tensor.Shape<2>.Error) {
         result = try Tensor.Value<Double, 2, Tensor.Layout.Order.Row>(
-            shape: shape, elements: elements
+            shape: shape,
+            elements: elements
         )
     } catch {
         preconditionFailure("rank2Tensor: element count by construction")
@@ -64,8 +68,11 @@ fileprivate func rank2Tensor(
 }
 
 /// Constructs a rank-3 tensor of `Double` from a flat row-major element list.
-fileprivate func rank3Tensor(
-    _ batches: Int, _ rows: Int, _ cols: Int, _ elements: [Double]
+private func rank3Tensor(
+    _ batches: Int,
+    _ rows: Int,
+    _ cols: Int,
+    _ elements: [Double]
 ) -> Tensor.Value<Double, 3, Tensor.Layout.Order.Row> {
     var dims = InlineArray<3, Cardinal>(repeating: .zero)
     dims[0] = Cardinal(UInt(batches))
@@ -75,7 +82,8 @@ fileprivate func rank3Tensor(
     let result: Tensor.Value<Double, 3, Tensor.Layout.Order.Row>
     do throws(Tensor.Shape<3>.Error) {
         result = try Tensor.Value<Double, 3, Tensor.Layout.Order.Row>(
-            shape: shape, elements: elements
+            shape: shape,
+            elements: elements
         )
     } catch {
         preconditionFailure("rank3Tensor: element count by construction")
@@ -84,7 +92,7 @@ fileprivate func rank3Tensor(
 }
 
 /// Reads element at coordinates `(i, j)` from a rank-2 tensor.
-fileprivate func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
+private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     from tensor: borrowing Tensor.Value<Element, 2, Layout>,
     at i: Int,
     _ j: Int
@@ -97,7 +105,7 @@ fileprivate func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`
 }
 
 /// Reads element at coordinate `i` from a rank-1 tensor.
-fileprivate func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
+private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     from tensor: borrowing Tensor.Value<Element, 1, Layout>,
     at i: Int
 ) throws(Tensor.Index.Error) -> Element {
@@ -108,7 +116,7 @@ fileprivate func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`
 }
 
 /// Reads element at coordinates `(b, i, j)` from a rank-3 tensor.
-fileprivate func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
+private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     from tensor: borrowing Tensor.Value<Element, 3, Layout>,
     at b: Int,
     _ i: Int,
@@ -123,7 +131,7 @@ fileprivate func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`
 }
 
 /// Absolute tolerance used for libm-driven elementwise equality checks.
-fileprivate let elementWiseTolerance: Double = 1e-12
+private let elementWiseTolerance: Double = 1e-12
 
 // MARK: - Unit: Transcendentals
 
@@ -274,14 +282,24 @@ extension `Tensors Operations Tests`.Unit {
         // → C = [[58, 64], [139, 154]]
         // Stack twice along axis 0 → result of shape (2, 2, 2) with each batch
         // equal to the rank-2 product.
-        let a = rank3Tensor(2, 2, 3, [
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-        ])
-        let b = rank3Tensor(2, 3, 2, [
-            7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
-            7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
-        ])
+        let a = rank3Tensor(
+            2,
+            2,
+            3,
+            [
+                1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+                1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+            ]
+        )
+        let b = rank3Tensor(
+            2,
+            3,
+            2,
+            [
+                7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
+                7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
+            ]
+        )
         do throws(Tensor.Broadcast.Error) {
             let c = try a.multiplied(batchedBy: b)
             #expect(c.shape.dims[0] == Cardinal(2))
@@ -325,10 +343,15 @@ extension `Tensors Operations Tests`.`Edge Case` {
 
     @Test
     func `batched matmul with mismatched batch sizes throws`() {
-        let a = rank3Tensor(2, 2, 3, [
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-        ])
+        let a = rank3Tensor(
+            2,
+            2,
+            3,
+            [
+                1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+                1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+            ]
+        )
         let b = rank3Tensor(3, 3, 2, Array(repeating: 1.0, count: 18))
         do throws(Tensor.Broadcast.Error) {
             _ = try a.multiplied(batchedBy: b)
@@ -345,10 +368,15 @@ extension `Tensors Operations Tests`.`Edge Case` {
 
     @Test
     func `batched matmul with mismatched inner dim throws`() {
-        let a = rank3Tensor(2, 2, 3, [
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-        ])
+        let a = rank3Tensor(
+            2,
+            2,
+            3,
+            [
+                1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+                1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+            ]
+        )
         let b = rank3Tensor(2, 4, 2, Array(repeating: 1.0, count: 16))
         do throws(Tensor.Broadcast.Error) {
             _ = try a.multiplied(batchedBy: b)

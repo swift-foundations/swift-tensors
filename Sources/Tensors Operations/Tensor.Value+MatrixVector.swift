@@ -59,7 +59,9 @@ where
         } catch {
             // n · 1 always equals n; this branch is unreachable for any
             // construction respecting the matrix-inner-dim guard above.
-            preconditionFailure("vector → column-matrix reshape preserves element count by construction")
+            preconditionFailure(
+                "vector → column-matrix reshape preserves element count by construction"
+            )
         }
 
         // L1 rank-2 matmul: (m, n) · (n, 1) → (m, 1).
