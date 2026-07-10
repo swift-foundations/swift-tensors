@@ -1,4 +1,4 @@
-// swift-tools-version: 6.3.1
+// swift-tools-version: 6.3.3
 // swift-tensors — composed tensor operations atop swift-tensor-primitives.
 
 import PackageDescription
