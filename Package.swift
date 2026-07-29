@@ -23,7 +23,6 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-numeric-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-vector-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-iso/swift-iso-9899.git", branch: "main"),
-        .package(url: "https://github.com/swift-foundations/swift-numerics.git", branch: "main"),
     ],
     targets: [
 
@@ -37,7 +36,6 @@ let package = Package(
                 .product(name: "Real Primitives", package: "swift-numeric-primitives"),
                 .product(name: "Vector Primitives", package: "swift-vector-primitives"),
                 .product(name: "ISO 9899 Core", package: "swift-iso-9899"),
-                .product(name: "Numerics", package: "swift-numerics"),
             ]
         ),
 
