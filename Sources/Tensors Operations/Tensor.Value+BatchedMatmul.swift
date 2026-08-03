@@ -57,6 +57,11 @@ where
         resultDims[1] = m
         resultDims[2] = n
         let resultShape = Tensor.Shape<3>(resultDims)
+        // REASON: newline-into-comment false positive — the regex's trailing
+        // `\s*[+\-*/]` spans the blank line and matches the `//` comment
+        // opener below as division; no arithmetic is applied to this value.
+        // Ruled at swift-institute/.github#218.
+        // swiftlint:disable:next no_int_bitpattern_arithmetic
         let totalOutput = Int(bitPattern: resultShape.count)
 
         // Build the result element-by-element via L1 public `element(at:)`.
