@@ -16,5 +16,5 @@
 // targets. The spine anchor is `Tensor Primitives Test Support` — the lowest
 // in-scope dep that already chains the spine through Buffer, Tagged, etc.
 
-@_exported public import Tensors
 @_exported public import Tensor_Primitives_Test_Support
+@_exported public import Tensors

@@ -335,6 +335,7 @@ extension `Tensors Operations Tests`.`Edge Case` {
             switch error {
             case .incompatibleShapes:
                 break
+
             default:
                 #expect(Bool(false), "Wrong error variant")
             }
@@ -360,6 +361,7 @@ extension `Tensors Operations Tests`.`Edge Case` {
             switch error {
             case .incompatibleShapes(let axis, _, _):
                 #expect(axis == .zero)
+
             default:
                 #expect(Bool(false), "Wrong error variant")
             }
@@ -385,6 +387,7 @@ extension `Tensors Operations Tests`.`Edge Case` {
             switch error {
             case .incompatibleShapes(let axis, _, _):
                 #expect(axis == Cardinal(2 as UInt))
+
             default:
                 #expect(Bool(false), "Wrong error variant")
             }
