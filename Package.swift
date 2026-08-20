@@ -1,4 +1,4 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 // swift-tensors — composed tensor operations atop swift-tensor-primitives.
 
 import PackageDescription
@@ -6,11 +6,11 @@ import PackageDescription
 let package = Package(
     name: "swift-tensors",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27"),
-        .visionOS("27"),
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
     ],
     products: [
         .library(name: "Tensors Operations", targets: ["Tensors Operations"]),
@@ -18,10 +18,22 @@ let package = Package(
         .library(name: "Tensors Test Support", targets: ["Tensors Test Support"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-tensor-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-complex-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-numeric-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-vector-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-tensor-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-complex-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-numeric-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-vector-primitives.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-iso/swift-iso-9899.git", branch: "main"),
     ],
     targets: [
@@ -59,7 +71,10 @@ let package = Package(
             name: "Tensors Test Support",
             dependencies: [
                 "Tensors",
-                .product(name: "Tensor Primitives Test Support", package: "swift-tensor-primitives"),
+                .product(
+                    name: "Tensor Primitives Test Support",
+                    package: "swift-tensor-primitives"
+                ),
             ],
             path: "Tests/Support"
         ),
