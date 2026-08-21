@@ -1,20 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-tensors open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-tensors project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Tensors_Test_Support
 import Testing
-
-// `Tensor.Value<Element, Rank, Layout>` is generic, so per [SWIFT-TEST-003] we
-// use the parallel-namespace pattern rather than `extension Tensor.Value {
-// @Suite struct Test {} }`.
 
 @Suite
 struct `Tensors Operations Tests` {
@@ -24,9 +9,6 @@ struct `Tensors Operations Tests` {
     @Suite(.serialized) struct Performance {}
 }
 
-// MARK: - Test Helpers
-
-/// Constructs a rank-1 tensor of `Double` from a flat element list.
 private func rank1Tensor(
     _ elements: [Double]
 ) -> Tensor.Value<Double, 1, Tensor.Layout.Order.Row> {
@@ -45,7 +27,6 @@ private func rank1Tensor(
     return result
 }
 
-/// Constructs a rank-2 tensor of `Double` from a flat row-major element list.
 private func rank2Tensor(
     _ rows: Int,
     _ cols: Int,
@@ -67,7 +48,6 @@ private func rank2Tensor(
     return result
 }
 
-/// Constructs a rank-3 tensor of `Double` from a flat row-major element list.
 private func rank3Tensor(
     _ batches: Int,
     _ rows: Int,
@@ -91,7 +71,6 @@ private func rank3Tensor(
     return result
 }
 
-/// Reads element at coordinates `(i, j)` from a rank-2 tensor.
 private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     from tensor: borrowing Tensor.Value<Element, 2, Layout>,
     at i: Int,
@@ -104,7 +83,6 @@ private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     return try tensor.element(at: position)
 }
 
-/// Reads element at coordinate `i` from a rank-1 tensor.
 private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     from tensor: borrowing Tensor.Value<Element, 1, Layout>,
     at i: Int
@@ -115,7 +93,6 @@ private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     return try tensor.element(at: position)
 }
 
-/// Reads element at coordinates `(b, i, j)` from a rank-3 tensor.
 private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     from tensor: borrowing Tensor.Value<Element, 3, Layout>,
     at b: Int,
@@ -130,10 +107,7 @@ private func readElement<Element: Copyable, Layout: Tensor.Layout.`Protocol`>(
     return try tensor.element(at: position)
 }
 
-/// Absolute tolerance used for libm-driven elementwise equality checks.
 private let elementWiseTolerance: Double = 1e-12
-
-// MARK: - Unit: Transcendentals
 
 extension `Tensors Operations Tests`.Unit {
     @Test
@@ -206,8 +180,6 @@ extension `Tensors Operations Tests`.Unit {
     }
 }
 
-// MARK: - Unit: Reductions
-
 extension `Tensors Operations Tests`.Unit {
     @Test
     func `mean of one through four equals two point five`() {
@@ -218,8 +190,7 @@ extension `Tensors Operations Tests`.Unit {
 
     @Test
     func `variance of one through five equals two`() {
-        // Population variance for {1,2,3,4,5}:
-        //   μ = 3; Σ(xᵢ-μ)² = 4+1+0+1+4 = 10; variance = 10/5 = 2
+
         let input = rank1Tensor([1.0, 2.0, 3.0, 4.0, 5.0])
         let result = input.variance()
         #expect((result - 2.0).magnitude < elementWiseTolerance)
@@ -229,13 +200,13 @@ extension `Tensors Operations Tests`.Unit {
     func `stdev of one through five equals sqrt of two`() {
         let input = rank1Tensor([1.0, 2.0, 3.0, 4.0, 5.0])
         let result = input.stdev()
-        let expected = 1.4142135623730951  // √2
+        let expected = 1.4142135623730951
         #expect((result - expected).magnitude < elementWiseTolerance)
     }
 
     @Test
     func `two norm of three four equals five`() {
-        // Pythagorean triple: 3² + 4² = 25; √25 = 5
+
         let input = rank1Tensor([3.0, 4.0])
         let result = input.norm(p: 2.0)
         #expect((result - 5.0).magnitude < elementWiseTolerance)
@@ -250,14 +221,10 @@ extension `Tensors Operations Tests`.Unit {
 
 }
 
-// MARK: - Unit: Matmul (composes L1 rank-2 matmul)
-
 extension `Tensors Operations Tests`.Unit {
     @Test
     func `matrix-vector product computes y equal A x`() {
-        // A = [[1, 2, 3], [4, 5, 6]];  x = [10, 20, 30]
-        // y = [1·10 + 2·20 + 3·30, 4·10 + 5·20 + 6·30]
-        //   = [140, 320]
+
         let a = rank2Tensor(2, 3, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
         let x = rank1Tensor([10.0, 20.0, 30.0])
 
@@ -277,11 +244,7 @@ extension `Tensors Operations Tests`.Unit {
 
     @Test
     func `batched matmul of two 2x3 by two 3x2 produces two 2x2 results`() {
-        // Two batches of the same matmul as L1 Tensor.Operations.Tests:
-        // A = [[1,2,3],[4,5,6]],  B = [[7,8],[9,10],[11,12]]
-        // → C = [[58, 64], [139, 154]]
-        // Stack twice along axis 0 → result of shape (2, 2, 2) with each batch
-        // equal to the rank-2 product.
+
         let a = rank3Tensor(
             2,
             2,
@@ -321,13 +284,11 @@ extension `Tensors Operations Tests`.Unit {
     }
 }
 
-// MARK: - Edge Cases
-
 extension `Tensors Operations Tests`.`Edge Case` {
     @Test
     func `matrix-vector multiply with mismatched inner dim throws`() {
         let a = rank2Tensor(2, 3, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
-        let x = rank1Tensor([10.0, 20.0])  // length 2, but A needs 3
+        let x = rank1Tensor([10.0, 20.0])
         do throws(Tensor.Broadcast.Error) {
             _ = try a.multiplied(by: x)
             #expect(Bool(false), "Expected throw")
@@ -396,8 +357,6 @@ extension `Tensors Operations Tests`.`Edge Case` {
 
 }
 
-// MARK: - Integration
-
 extension `Tensors Operations Tests`.Integration {
     @Test
     func `exp then log returns approximately the input`() throws(Tensor.Index.Error) {
@@ -413,12 +372,12 @@ extension `Tensors Operations Tests`.Integration {
 
     @Test
     func `sin squared plus cos squared equals one`() {
-        // Pythagorean identity: sin²(x) + cos²(x) = 1 for all x.
+
         let input = rank1Tensor([0.5, 1.5, 2.5])
         let sines = input.sin()
         let cosines = input.cos()
         do throws(Tensor.Broadcast.Error) {
-            // Element-wise square via L1 multiplying-elementWise.
+
             let sinSquared = try sines.multiplying(elementWise: sines)
             let cosSquared = try cosines.multiplying(elementWise: cosines)
             let one = try sinSquared.adding(cosSquared)

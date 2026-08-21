@@ -1,5 +1,4 @@
 // swift-tools-version: 6.4
-// swift-tensors — composed tensor operations atop swift-tensor-primitives.
 
 import PackageDescription
 
@@ -38,7 +37,6 @@ let package = Package(
     ],
     targets: [
 
-        // MARK: - Core (internal)
         .target(
             name: "Tensors Core",
             dependencies: [
@@ -51,13 +49,11 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Operations
         .target(
             name: "Tensors Operations",
             dependencies: ["Tensors Core"]
         ),
 
-        // MARK: - Umbrella
         .target(
             name: "Tensors",
             dependencies: [
@@ -66,7 +62,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Test Support
         .target(
             name: "Tensors Test Support",
             dependencies: [
@@ -79,7 +74,6 @@ let package = Package(
             path: "Tests/Support"
         ),
 
-        // MARK: - Tests
         .testTarget(
             name: "Tensors Tests",
             dependencies: [
